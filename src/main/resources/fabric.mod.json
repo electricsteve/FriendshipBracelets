@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "friendship_bracelets",
+  "version": "${version}",
+  "name": "Friendship Bracelets",
+  "description": "Friendship bracelets in Minecraft",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/friendship_bracelets/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "electricsteve.friendship_bracelets.client.Friendship_braceletsClient"
+    ],
+    "main": [
+      "electricsteve.friendship_bracelets.Friendship_bracelets"
+    ]
+  },
+  "mixins": [
+    "friendship_bracelets.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
