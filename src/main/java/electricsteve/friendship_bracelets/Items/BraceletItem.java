@@ -7,11 +7,13 @@ import electricsteve.friendship_bracelets.Friendship_bracelets;
 import electricsteve.friendship_bracelets.client.TrinketModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,7 +44,8 @@ public class BraceletItem extends TrinketItem implements TrinketRenderer {
     @Override
     @Environment(EnvType.CLIENT)
     public void render(ItemStack stack, SlotReference slotReference, EntityModel<? extends LivingEntity> contextModel, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, LivingEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
-        BipedEntityModel<LivingEntity> model = this.getModel();
+        boolean slim = entity instanceof AbstractClientPlayerEntity playerEntity && playerEntity.getSkinTextures().model() == SkinTextures.Model.SLIM;
+        BipedEntityModel<LivingEntity> model = this.getModel(slim, false);
         model.setAngles(entity, limbAngle, limbDistance, animationProgress, animationProgress, headPitch);
         model.animateModel(entity, limbAngle, limbDistance, tickDelta);
         TrinketRenderer.followBodyRotations(entity, model);
@@ -51,9 +54,9 @@ public class BraceletItem extends TrinketItem implements TrinketRenderer {
     }
 
     @Environment(EnvType.CLIENT)
-    private BipedEntityModel<LivingEntity> getModel() {
+    private BipedEntityModel<LivingEntity> getModel(boolean slim, boolean leftArm) {
         if (this.model == null) {
-            this.model = new TrinketModel(TrinketModel.getTexturedModelData().createModel());
+            this.model = new TrinketModel(TrinketModel.getTexturedModelData(slim, leftArm).createModel(), leftArm);
         }
 
         return this.model;
