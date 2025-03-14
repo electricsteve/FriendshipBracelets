@@ -31,10 +31,10 @@ public class TrinketModel extends BipedEntityModel<LivingEntity> {
             // Default arm
             modelPartData.addChild(modelPartName, ModelPartBuilder.create()
                     .uv(0, 0)   .cuboid(1.3F,              yOffset, -2.3F,             thickness,    1.0F, 4.6F)
-                    .uv(-1, 0)   .cuboid(-3.3F,             yOffset, -2.3F-thickness,   4.6F,   1.0F, thickness)
-                    .uv(1, 0)   .cuboid(-3.3F,             yOffset, 2.3F,              4.6F,   1.0F, thickness)
-                    .uv(-1, -1)   .cuboid(-3.3F-thickness,   yOffset, -2.3F,             thickness,    1.0F, 4.6F)
-                    .uv(1,1)    .cuboid(-2,                 yOffset-0.25F,-2.55F-thickness,   2.0F,   0.5F, thickness)
+                    .uv(0, 2)   .cuboid(-3.3F,             yOffset, -2.3F-thickness,   4.6F,   1.0F, thickness)
+                    .uv(0, 4)   .cuboid(-3.3F,             yOffset, 2.3F,              4.6F,   1.0F, thickness)
+                    .uv(0, 6)   .cuboid(-3.3F-thickness,   yOffset, -2.3F,             thickness,    1.0F, 4.6F)
+                    .uv(0, 8)   .cuboid(-2,                 yOffset+0.25F,-2.55F-thickness,   2.0F,   0.5F, thickness)
                     , ModelTransform.NONE);
         }
         return TexturedModelData.of(modelData, 32, 32);

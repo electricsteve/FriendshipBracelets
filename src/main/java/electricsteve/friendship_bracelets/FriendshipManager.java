@@ -43,6 +43,10 @@ public class FriendshipManager {
         return friendship;
     }
 
+    public Friendship getFriendship(int id) {
+        return friendships.stream().filter(friendship -> friendship.getId() == id).findFirst().orElse(null);
+    }
+
     private int getNewId() {
         return friendships.stream().mapToInt(Friendship::getId).max().orElse(0) + 1;
     }
@@ -56,13 +60,13 @@ public class FriendshipManager {
         }
     }
 
-    public static FriendshipManager Load(Path filePath) {
+    public static void Load(Path filePath) {
         try {
             Gson gson = new Gson();
-            return gson.fromJson(Files.newBufferedReader(filePath), FriendshipManager.class);
+            instance = gson.fromJson(Files.newBufferedReader(filePath), FriendshipManager.class);
         } catch (Exception e) {
             Friendship_bracelets.LOGGER.error("Error while loading Bracelets", e);
-            return new FriendshipManager(filePath);
+            new FriendshipManager(filePath);
         }
     }
 }

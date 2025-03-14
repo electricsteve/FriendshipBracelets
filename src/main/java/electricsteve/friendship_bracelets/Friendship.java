@@ -71,6 +71,16 @@ public class Friendship {
         }
     }
 
+    public BlockPos getOtherPlayerPos(String braceletName, MinecraftServer server) {
+        if (bracelet1 != null && bracelet1.getName().equals(braceletName)) {
+            return bracelet2.getLastKnownPos();
+        } else if (bracelet2 != null && bracelet2.getName().equals(braceletName)) {
+            return bracelet1.getLastKnownPos();
+        } else {
+            return null;
+        }
+    }
+
     public int getId() {
         return id;
     }
