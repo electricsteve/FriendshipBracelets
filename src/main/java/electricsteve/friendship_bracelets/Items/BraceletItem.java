@@ -18,14 +18,16 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.SubtitleS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.Objects;
 
 public class BraceletItem extends TrinketItem implements TrinketRenderer {
     private static final Identifier TEXTURE = Identifier.of("friendship_bracelets", "textures/entity/trinket/basic_bracelet.png");
@@ -54,8 +56,16 @@ public class BraceletItem extends TrinketItem implements TrinketRenderer {
             Text subtitleText;
             ServerPlayerEntity otherPlayer = friendship.getOtherPlayer(braceletComponent.nameInFriendship(), world.getServer());
             if (otherPlayer != null) {
-                String otherPlayerPos = otherPlayer.getBlockPos().toString();
-                subtitleText = Text.literal("Other player: ").withColor(Colors.GREEN).append(otherPlayer.getDisplayName()).append(Text.literal(" Location: ").withColor(Colors.GREEN)).append(Text.literal(otherPlayerPos));
+                if (friendship.getIfPlayerHasOtherBracelet(otherPlayer, braceletComponent.nameInFriendship())) {
+                    BlockPos otherPlayerPos = otherPlayer.getBlockPos();
+                    String otherPlayerPosStr = "X=" + otherPlayerPos.getX() + " Y=" + otherPlayerPos.getY() + " Z=" + otherPlayerPos.getZ();
+                    subtitleText = Text.literal("Other player: ").withColor(Colors.GREEN).append(Objects.requireNonNull(otherPlayer.getDisplayName()).copy().withColor(Colors.RED)).append(Text.literal(" Location: ").withColor(Colors.GREEN)).append(Text.literal(otherPlayerPosStr).withColor(Colors.YELLOW));
+                    
+                } else {
+                    BlockPos otherLastKnownPos = friendship.getOtherPlayerLastKnownPos(braceletComponent.nameInFriendship());
+                    String otherPlayerPosStr = "X=" + otherLastKnownPos.getX() + " Y=" + otherLastKnownPos.getY() + " Z=" + otherLastKnownPos.getZ();
+                    subtitleText = Text.literal("No player found holding " + braceletComponent.nameInFriendship()).withColor(Colors.GREEN).append(Text.literal(", Last known location: ")).append(Text.literal(otherPlayerPosStr).withColor(Colors.YELLOW));
+                }
             } else {
                 subtitleText = Text.literal("Other player: ").withColor(Colors.GREEN);
             }
@@ -68,7 +78,7 @@ public class BraceletItem extends TrinketItem implements TrinketRenderer {
                 serverPlayerEntity.sendMessage(Text.literal("No bracelet linked, hold another in your other hand and Use.").withColor(Colors.GREEN), true);
             } else {
                 Friendship_bracelets.LOGGER.info("Bracelet has linked");
-                Friendship friendship = FriendshipManager.instance.newFriendship(returnStack, stack, serverPlayerEntity);
+                FriendshipManager.instance.newFriendship(returnStack, stack, serverPlayerEntity);
                 serverPlayerEntity.sendMessage(Text.literal("Linked bracelets.").withColor(Colors.GREEN), true);
             }
         }

@@ -22,5 +22,6 @@ public class ModItems {
     public static final Item BASIC_BRACELET = register(new BraceletItem(new Item.Settings().maxCount(1)), "basic_bracelet");
 
     public static void initialize() {
+        Friendship_bracelets.LOGGER.info("Initializing Friendship Bracelets");
     }
 }

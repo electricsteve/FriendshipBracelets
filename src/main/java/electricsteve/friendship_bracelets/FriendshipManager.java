@@ -13,27 +13,12 @@ import java.util.List;
 public class FriendshipManager {
     public static FriendshipManager instance;
     private final transient Path filePath;
-    private List<Friendship> friendships;
+    private final List<Friendship> friendships;
 
     public FriendshipManager(Path filePath) {
         this.filePath = filePath;
         this.friendships = new ArrayList<>();
         instance = this;
-    }
-
-    public Friendship newFriendship() {
-        Friendship friendship = new Friendship(getNewId());
-        friendships.add(friendship);
-        Save();
-        return friendship;
-    }
-
-    public Friendship newFriendship(ItemStack itemStack, PlayerEntity player) {
-        Friendship friendship = new Friendship(getNewId());
-        friendship.addBraceletFromItemAndPlayer(itemStack, player);
-        friendships.add(friendship);
-        Save();
-        return friendship;
     }
 
     public Friendship newFriendship(ItemStack itemStack1, ItemStack itemStack2, PlayerEntity player) {

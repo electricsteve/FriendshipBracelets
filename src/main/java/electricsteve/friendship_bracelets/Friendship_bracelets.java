@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Friendship_bracelets implements ModInitializer {
-    public static Logger LOGGER = LoggerFactory.getLogger("FriendshipBracelets");
+    public static final Logger LOGGER = LoggerFactory.getLogger("FriendshipBracelets");
 
     @Override
     public void onInitialize() {
