@@ -117,8 +117,8 @@ public class Friendship {
 
     public static class BraceletData {
         private final String name;
-        private UUID lastKnownPlayer;
-        private BlockPos lastKnownPos;
+        private final UUID lastKnownPlayer;
+        private final BlockPos lastKnownPos;
 
         public BraceletData(String name, UUID lastKnownPlayer, BlockPos lastKnownPos) {
             this.name = name;

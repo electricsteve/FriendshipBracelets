@@ -4,9 +4,11 @@ import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;
 import dev.emi.trinkets.api.client.TrinketRenderer;
 import electricsteve.friendship_bracelets.*;
+import electricsteve.friendship_bracelets.Networking.GlowEntityS2CPayload;
 import electricsteve.friendship_bracelets.client.TrinketModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
@@ -15,23 +17,24 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Objects;
 
 public class BraceletItem extends TrinketItem implements TrinketRenderer {
-    private static final Identifier TEXTURE = Identifier.of("friendship_bracelets", "textures/entity/trinket/basic_bracelet.png");
+    private static final Identifier TEXTURE = Identifier.of(Reference.MOD_ID, "textures/entity/trinket/basic_bracelet.png");
+    private static final Identifier TEXTURE_SLIM = Identifier.of(Reference.MOD_ID, "textures/entity/trinket/basic_bracelet_slim.png");
     private BipedEntityModel<LivingEntity> model;
+    private boolean slim;
+    private boolean leftArm;
 
     public BraceletItem(Settings settings) {
         super(settings);
@@ -60,7 +63,8 @@ public class BraceletItem extends TrinketItem implements TrinketRenderer {
                     BlockPos otherPlayerPos = otherPlayer.getBlockPos();
                     String otherPlayerPosStr = "X=" + otherPlayerPos.getX() + " Y=" + otherPlayerPos.getY() + " Z=" + otherPlayerPos.getZ();
                     subtitleText = Text.literal("Other player: ").withColor(Colors.GREEN).append(Objects.requireNonNull(otherPlayer.getDisplayName()).copy().withColor(Colors.RED)).append(Text.literal(" Location: ").withColor(Colors.GREEN)).append(Text.literal(otherPlayerPosStr).withColor(Colors.YELLOW));
-                    
+                    GlowEntityS2CPayload payload = new GlowEntityS2CPayload(otherPlayer.getId(), 100);
+                    ServerPlayNetworking.send(serverPlayerEntity, payload);
                 } else {
                     BlockPos otherLastKnownPos = friendship.getOtherPlayerLastKnownPos(braceletComponent.nameInFriendship());
                     String otherPlayerPosStr = "X=" + otherLastKnownPos.getX() + " Y=" + otherLastKnownPos.getY() + " Z=" + otherLastKnownPos.getZ();
@@ -79,6 +83,8 @@ public class BraceletItem extends TrinketItem implements TrinketRenderer {
             } else {
                 Friendship_bracelets.LOGGER.info("Bracelet has linked");
                 FriendshipManager.instance.newFriendship(returnStack, stack, serverPlayerEntity);
+                returnStack.set(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
+                stack.set(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
                 serverPlayerEntity.sendMessage(Text.literal("Linked bracelets.").withColor(Colors.GREEN), true);
             }
         }
@@ -89,17 +95,21 @@ public class BraceletItem extends TrinketItem implements TrinketRenderer {
     @Environment(EnvType.CLIENT)
     public void render(ItemStack stack, SlotReference slotReference, EntityModel<? extends LivingEntity> contextModel, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, LivingEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
         boolean slim = entity instanceof AbstractClientPlayerEntity playerEntity && playerEntity.getSkinTextures().model() == SkinTextures.Model.SLIM;
-        BipedEntityModel<LivingEntity> model = this.getModel(slim, false);
+        boolean leftArm = Objects.equals(slotReference.inventory().getSlotType().getGroup(), "offhand");
+        if (entity.getMainArm() == Arm.LEFT) leftArm = !leftArm;
+        BipedEntityModel<LivingEntity> model = this.getModel(slim, leftArm);
         model.setAngles(entity, limbAngle, limbDistance, animationProgress, animationProgress, headPitch);
         model.animateModel(entity, limbAngle, limbDistance, tickDelta);
         TrinketRenderer.followBodyRotations(entity, model);
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(model.getLayer(TEXTURE));
+        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(model.getLayer(slim ? TEXTURE_SLIM : TEXTURE));
         model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV);
     }
 
     @Environment(EnvType.CLIENT)
     private BipedEntityModel<LivingEntity> getModel(boolean slim, boolean leftArm) {
-        if (this.model == null) {
+        if (this.model == null || slim != this.slim || leftArm != this.leftArm) {
+            this.slim = slim;
+            this.leftArm = leftArm;
             this.model = new TrinketModel(TrinketModel.getTexturedModelData(slim, leftArm).createModel(), leftArm);
         }
 

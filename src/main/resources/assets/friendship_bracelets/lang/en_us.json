@@ -1,5 +1,7 @@
 {
   "item.friendship_bracelets.basic_bracelet": "Basic Bracelet",
   "trinkets.slot.hand.bracelet": "Bracelet",
-  "tag.item.trinkets.hand.bracelet": "Bracelets"
+  "trinkets.slot.offhand.bracelet": "Bracelet",
+  "tag.item.trinkets.hand.bracelet": "Bracelets",
+  "tag.item.trinkets.offhand.bracelet": "Bracelets"
 }

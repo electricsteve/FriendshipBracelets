@@ -10,12 +10,12 @@ import net.minecraft.util.Identifier;
 public class ModItems {
     public static final ComponentType<BraceletComponent> BRACELET_COMPONENT = Registry.register(
             Registries.DATA_COMPONENT_TYPE,
-            Identifier.of("friendship_bracelets", "bracelet_uuid"),
+            Identifier.of(Reference.MOD_ID, "bracelet_uuid"),
             ComponentType.<BraceletComponent>builder().codec(BraceletComponent.CODEC).build()
     );
 
     public static Item register(Item item, String id) {
-        Identifier itemID = Identifier.of("friendship_bracelets", id);
+        Identifier itemID = Identifier.of(Reference.MOD_ID, id);
         return Registry.register(Registries.ITEM, itemID, item);
     }
 
