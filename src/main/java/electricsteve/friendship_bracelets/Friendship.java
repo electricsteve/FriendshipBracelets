@@ -111,14 +111,24 @@ public class Friendship {
         return result.get();
     }
 
+    public BraceletData getBraceletData(String braceletName) {
+        if (bracelet1 != null && bracelet1.getName().equals(braceletName)) {
+            return bracelet1;
+        } else if (bracelet2 != null && bracelet2.getName().equals(braceletName)) {
+            return bracelet2;
+        } else {
+            return null;
+        }
+    }
+
     public int getId() {
         return id;
     }
 
     public static class BraceletData {
         private final String name;
-        private final UUID lastKnownPlayer;
-        private final BlockPos lastKnownPos;
+        private UUID lastKnownPlayer;
+        private BlockPos lastKnownPos;
 
         public BraceletData(String name, UUID lastKnownPlayer, BlockPos lastKnownPos) {
             this.name = name;
@@ -136,6 +146,14 @@ public class Friendship {
 
         public BlockPos getLastKnownPos() {
             return lastKnownPos;
+        }
+
+        public void setLastKnownPos(BlockPos lastKnownPos) {
+            this.lastKnownPos = lastKnownPos;
+        }
+
+        public void setLastKnownPlayer(UUID lastKnownPlayer) {
+            this.lastKnownPlayer = lastKnownPlayer;
         }
 
     }

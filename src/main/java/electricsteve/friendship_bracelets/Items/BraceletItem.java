@@ -33,8 +33,9 @@ public class BraceletItem extends TrinketItem implements TrinketRenderer {
     private static final Identifier TEXTURE = Identifier.of(Reference.MOD_ID, "textures/entity/trinket/basic_bracelet.png");
     private static final Identifier TEXTURE_SLIM = Identifier.of(Reference.MOD_ID, "textures/entity/trinket/basic_bracelet_slim.png");
     private BipedEntityModel<LivingEntity> model;
-    private boolean slim;
-    private boolean leftArm;
+    private BipedEntityModel<LivingEntity> leftArmModel;
+    private BipedEntityModel<LivingEntity> slimModel;
+    private BipedEntityModel<LivingEntity> slimLeftArmModel;
 
     public BraceletItem(Settings settings) {
         super(settings);
@@ -107,12 +108,30 @@ public class BraceletItem extends TrinketItem implements TrinketRenderer {
 
     @Environment(EnvType.CLIENT)
     private BipedEntityModel<LivingEntity> getModel(boolean slim, boolean leftArm) {
-        if (this.model == null || slim != this.slim || leftArm != this.leftArm) {
-            this.slim = slim;
-            this.leftArm = leftArm;
-            this.model = new TrinketModel(TrinketModel.getTexturedModelData(slim, leftArm).createModel(), leftArm);
+        if (leftArm) {
+            if (slim) {
+                if (slimLeftArmModel == null) {
+                    this.slimLeftArmModel = new TrinketModel(TrinketModel.getTexturedModelData(true, true).createModel(), true);
+                }
+                return slimLeftArmModel;
+            } else {
+                if (leftArmModel == null) {
+                    this.leftArmModel = new TrinketModel(TrinketModel.getTexturedModelData(false, true).createModel(), true);
+                }
+                return leftArmModel;
+            }
+        } else {
+            if (slim) {
+                if (slimModel == null) {
+                    this.slimModel = new TrinketModel(TrinketModel.getTexturedModelData(true, false).createModel(), false);
+                }
+                return slimModel;
+            } else {
+                if (model == null) {
+                    this.model = new TrinketModel(TrinketModel.getTexturedModelData(false, false).createModel(), false);
+                }
+                return model;
+            }
         }
-
-        return this.model;
     }
 }

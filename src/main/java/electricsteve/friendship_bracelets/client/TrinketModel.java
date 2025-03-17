@@ -1,6 +1,5 @@
 package electricsteve.friendship_bracelets.client;
 
-import electricsteve.friendship_bracelets.Friendship_bracelets;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.*;
@@ -21,7 +20,6 @@ public class TrinketModel extends BipedEntityModel<LivingEntity> {
     }
 
     public static TexturedModelData getTexturedModelData(boolean slim, boolean leftArm) {
-        Friendship_bracelets.LOGGER.info("TrinketModel getTexturedModelData, slim: {}, leftArm: {}", slim, leftArm);
         ModelData modelData = BipedEntityModel.getModelData(Dilation.NONE, 0f);
         ModelPartData modelPartData = modelData.getRoot();
         String modelPartName = leftArm ? "left_arm" : "right_arm";

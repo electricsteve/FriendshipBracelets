@@ -4,6 +4,8 @@
   "package": "electricsteve.friendship_bracelets.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ItemEntityMixin",
+    "PlayerInventoryMixin"
   ],
   "client": [
     "EntityMixin"
