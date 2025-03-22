@@ -18,13 +18,14 @@ public class ItemEntityMixin {
         if (stack.getItem() instanceof BraceletItem) {
             BraceletComponent braceletComponent = stack.get(ModItems.BRACELET_COMPONENT);
             if (braceletComponent != null) {
+                Entity entity = (Entity) (Object) this;
+                if (entity.getWorld().isClient()) return;
                 Friendship_bracelets.LOGGER.info("Bracelet has component");
                 int friendshipId = braceletComponent.friendshipId();
                 Friendship friendship = FriendshipManager.instance.getFriendship(friendshipId);
                 if (friendship != null) {
                     Friendship.BraceletData braceletData = friendship.getBraceletData(braceletComponent.nameInFriendship());
                     if (braceletData != null) {
-                        Entity entity = (Entity) (Object) this;
                         braceletData.setLastKnownPos(entity.getBlockPos());
                     }
                 }

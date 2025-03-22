@@ -35,6 +35,8 @@ public class PlayerInventoryMixin {
         if (stack.getItem() instanceof BraceletItem) {
             BraceletComponent braceletComponent = stack.get(ModItems.BRACELET_COMPONENT);
             if (braceletComponent != null) {
+                PlayerInventory inventory = (PlayerInventory) (Object) this;
+                if (inventory.player.getWorld().isClient()) return;
                 Friendship_bracelets.LOGGER.info("Bracelet has component");
                 int friendshipId = braceletComponent.friendshipId();
                 Friendship friendship = FriendshipManager.instance.getFriendship(friendshipId);
